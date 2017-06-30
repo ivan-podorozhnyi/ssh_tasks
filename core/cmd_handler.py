@@ -33,5 +33,10 @@ class VimCmdHandler(ShellCmdHandler):
     def __init__(self, connection: SshConnection):
         super().__init__(connection)
 
-    def edit_file(self, file_name):
+    def edit_file(self, file_name, text):
         self.send_command('vim ' + file_name + '\n')
+        self.send_command('i')
+        self.send_command(text)
+        super().send_key('ESC')
+        super().send_command(':wq\n')
+

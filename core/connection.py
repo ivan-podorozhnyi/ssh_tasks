@@ -34,6 +34,6 @@ class SshConnection:
             print('closing')
             self.client.close()
 
-    def invoke_sftp(self):
+    def open_sftp(self):
         print('invoking sftp')
         return self.client.open_sftp()

@@ -34,14 +34,10 @@ def shell_handler(request, connection):
 
 def test_edit_vim(shell_handler, connection):
     file_name = 'new_file.txt'
-    vim_handler = VimCmdHandler(shell_handler)
-    vim_handler.edit_file(file_name)
-    vim_handler.send_command()
     random_text = ''.join(random.sample(string.digits, 8))
-    vim_handler.send_command(random_text)
-    vim_handler.send_command(str(chr(27)))
-    shell_handler.send_command(':wq\n')
-    sftp_client = connection.invoke_sftp()
+    vim_handler = VimCmdHandler(connection)
+    vim_handler.edit_file(file_name, random_text)
+    sftp_client = connection.open_sftp()
     remote_file = sftp_client.open('/home/ivan/' + file_name)
     file_content = ''
     for line in remote_file:
