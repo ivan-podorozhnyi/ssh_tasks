@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-
 from time import sleep
-from core.connection import Connection, SshConnection
-import paramiko
+
+from core.connection import SshConnection
 
 
 class CmdHandler(ABC):
