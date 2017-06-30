@@ -17,8 +17,8 @@ class ShellCmdHandler(CmdHandler):
         self.shell = self.connection.open_shell()
 
     def send_command(self, command):
+        self.shell.send(command)
         sleep(0.5)
-        self.shell.send(command + '\n')
 
     def close(self):
         self.shell.close()

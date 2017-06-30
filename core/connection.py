@@ -19,12 +19,15 @@ class SshConnection:
         self.user = user
 
     def connect(self):
+        print('connecting')
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self.client.connect(hostname=self.user.address, username=self.user.name, port=self.user.port, pkey=self.key)
 
     def open_shell(self):
+        print('invoking shell')
         return self.client.invoke_shell()
 
     def close(self):
         if self.client is not None:
+            print('closing')
             self.client.close()
