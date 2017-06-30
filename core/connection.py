@@ -29,11 +29,11 @@ class SshConnection:
         print('invoking shell')
         return self.client.invoke_shell()
 
+    def open_sftp(self):
+        print('invoking sftp')
+        return self.client.open_sftp()
+
     def close(self):
         if self.client is not None:
             print('closing')
             self.client.close()
-
-    def open_sftp(self):
-        print('invoking sftp')
-        return self.client.open_sftp()

@@ -13,14 +13,22 @@ class CmdHandler(ABC):
 class ShellCmdHandler(CmdHandler):
     def __init__(self, connection: SshConnection):
         self.connection = connection
-        self.shell = self.connection.open_shell()
+        self._shell = self.connection.open_shell()
 
     def send_command(self, command):
-        self.shell.send(command)
+        self._shell.send(command)
         sleep(0.5)
+        return self.read_output()
+
+    def read_output(self):
+        stdout_raw = b""
+        while self._shell.recv_ready():
+            stdout_raw += self._shell.recv(1024)
+            sleep(0.2)
+        return str(stdout_raw, "utf-8")
 
     def close(self):
-        self.shell.close()
+        self._shell.close()
 
     def send_key(self, key: str):
         if key == 'ESC':
