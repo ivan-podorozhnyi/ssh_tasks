@@ -3,7 +3,7 @@ import string
 
 import pytest
 
-from core.cmd_handler import ShellCmdHandler, VimCmdHandler
+from core.cmd_handler import VimCmdHandler
 from core.connection import SshConnection
 from core.user import SshUser
 
@@ -21,18 +21,7 @@ def connection(request):
     return ssh_connection
 
 
-@pytest.fixture()
-def shell_handler(request, connection):
-    handler = ShellCmdHandler(connection)
-
-    def resource_teardown():
-        handler.close()
-
-    request.addfinalizer(resource_teardown)
-    return handler
-
-
-def test_edit_vim(shell_handler, connection):
+def test_edit_vim(connection):
     file_name = 'new_file.txt'
     random_text = ''.join(random.sample(string.digits, 8))
     vim_handler = VimCmdHandler(connection)

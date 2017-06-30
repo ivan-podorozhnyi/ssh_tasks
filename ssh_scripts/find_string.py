@@ -12,12 +12,11 @@ client.connect(hostname=host, port=port, username=user, pkey=k)
 
 sftp_client = client.open_sftp()
 remote_file = sftp_client.open('/etc/hosts')
-search_host = '127.0.0.1'
-search_name = 'localhost'
+text_search = '127.0.0.1\tlocalhost'
 
 try:
     for line in remote_file:
-        if search_host in line and search_name in line:
+        if text_search in line:
             print('yes')
 finally:
     remote_file.close()
