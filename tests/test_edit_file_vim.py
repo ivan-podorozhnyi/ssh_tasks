@@ -1,30 +1,49 @@
-from core.cmd_handler import ShellCmdHandler
-from core.connection import SshConnection
-from core.user import User
+import random
+import string
+
 import pytest
-import random, string
+
+from core.cmd_handler import ShellCmdHandler, VimCmdHandler
+from core.connection import SshConnection
+from core.user import SshUser
 
 
 @pytest.fixture()
-def setup_resource(request):
-    user = User(name='ivan', port=3022, key='../id_rsa', address='127.0.0.1')
-    connection = SshConnection(user)
-    connection.connect()
-    handler = ShellCmdHandler(connection)
+def connection(request):
+    user = SshUser(name='ivan', port=3022, key='../id_rsa', address='127.0.0.1')
+    ssh_connection = SshConnection(user)
+    ssh_connection.connect_via_key()
 
-    def teardown(setup_resource):
-        setup_resource.close()
-        connection.close()
+    def teardown():
+        ssh_connection.close()
 
     request.addfinalizer(teardown)
+    return ssh_connection
+
+
+@pytest.fixture()
+def shell_handler(request, connection):
+    handler = ShellCmdHandler(connection)
+
+    def resource_teardown():
+        handler.close()
+
+    request.addfinalizer(resource_teardown)
     return handler
 
 
-def test_edit_vim(setup_resource):
-    setup_resource.send_command('vim new_file.txt\n')
-    setup_resource.send_command('i')
+def test_edit_vim(shell_handler, connection):
+    file_name = 'new_file.txt'
+    vim_handler = VimCmdHandler(shell_handler)
+    vim_handler.edit_file(file_name)
+    vim_handler.send_command()
     random_text = ''.join(random.sample(string.digits, 8))
-    setup_resource.send_command(random_text)
-    setup_resource.send_command(str(chr(27)))
-    setup_resource.send_command(':wq\n')
-
+    vim_handler.send_command(random_text)
+    vim_handler.send_command(str(chr(27)))
+    shell_handler.send_command(':wq\n')
+    sftp_client = connection.invoke_sftp()
+    remote_file = sftp_client.open('/home/ivan/' + file_name)
+    file_content = ''
+    for line in remote_file:
+        file_content += line
+    assert random_text in file_content
