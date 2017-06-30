@@ -33,3 +33,7 @@ class SshConnection:
         if self.client is not None:
             print('closing')
             self.client.close()
+
+    def invoke_sftp(self):
+        print('invoking sftp')
+        return self.client.open_sftp()
