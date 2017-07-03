@@ -1,17 +1,13 @@
-import paramiko
+from core.user import SshUser
+from core.connection import SshConnection
+from core.cmd_handler import ShellCmdHandler
 
 
-key = paramiko.RSAKey.from_private_key_file("/Users/akarab/.ssh/id_rsa")
-client = paramiko.SSHClient()
-client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+user = SshUser(name="anton", port=3022, key="../id_rsa", address="127.0.0.1")
+connection = SshConnection(user).connect_via_key()
+shell = ShellCmdHandler(connection)
 
-print("connecting")
-client.connect(hostname="127.0.0.1", port=3022, username="anton", pkey=key)
-print("Connected")
+shell.send_command("touch new_test111\n")
 
-stdin, stdout, stderr = client.exec_command("touch test_file")
-print([line for line in stderr.readlines()])
-stdin, stdout, stderr = client.exec_command("ls")
-print([line for line in stdout.readlines()])
-
-client.close()
+shell.close()
+connection.close()
