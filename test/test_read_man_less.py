@@ -29,9 +29,8 @@ def shell(request, connection):
 
 
 def test_read_man(shell):
-    shell.send_command("man less\n")
-    while True:
+    stdout = shell.send_command("man less\n")
+    while "AUTHOR" not in stdout:
         stdout = shell.send_key("SPACE")
-        if "AUTHOR" in stdout:
-            break
-    shell.send_command("q")
+    stdout = shell.send_command("q")
+    assert ":~$ " in stdout
