@@ -32,9 +32,9 @@ class ShellCmdHandler(CmdHandler):
 
     def send_key(self, key: str):
         if key == 'ESC':
-            self.send_command(str(chr(27)))
+            return self.send_command(str(chr(27)))
         elif key == 'SPACE':
-            self.send_command(str(chr(32)))
+            return self.send_command(str(chr(32)))
 
 
 class VimCmdHandler(ShellCmdHandler):
