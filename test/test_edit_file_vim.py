@@ -1,6 +1,3 @@
-import random
-import string
-
 import pytest
 
 from core.cmd_handler import VimCmdHandler
@@ -23,14 +20,24 @@ def connection(request):
     return ssh_connection
 
 
-def test_edit_vim(connection):
-    new_txt_file = TxtFileGenerator('new_file')
-    new_remote_file = RemoteHomeFileGenerator(new_txt_file, 'ivan')
+@pytest.fixture()
+def sftp_client(request, connection):
+    client = connection.open_sftp()
+
+    def teardown():
+        client.close()
+
+    request.addfinalizer(teardown)
+    return client
+
+
+def test_edit_vim(connection, sftp_client):
+    txt_file = TxtFileGenerator('new_file')
+    remote_file = RemoteHomeFileGenerator(txt_file, 'ivan')
     random_text = RandomGenerator(10).generate_string('digits')
     vim_handler = VimCmdHandler(connection)
-    vim_handler.edit_file(new_txt_file.get_name(), random_text)
-    sftp_client = connection.open_sftp()
-    remote_file = sftp_client.open(new_remote_file.get_name())
+    vim_handler.edit_file(txt_file.get_name(), random_text)
+    remote_file = sftp_client.open(remote_file.get_name())
     file_content = ''
     for line in remote_file:
         file_content += line

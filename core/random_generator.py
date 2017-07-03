@@ -6,7 +6,7 @@ class RandomGenerator(object):
     def __init__(self, length: int):
         self._length = length
 
-    def generate_string(self, output: str):
+    def generate_string(self, output: str) -> str:
         if output == 'string':
             return ''.join(random.sample(string.ascii_letters, self._length))
         elif output == 'digits':

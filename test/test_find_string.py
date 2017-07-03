@@ -17,10 +17,20 @@ def connection(request):
     return ssh_connection
 
 
-def test_find_string(connection):
+@pytest.fixture()
+def sftp_client(request, connection):
+    client = connection.open_sftp()
+
+    def teardown():
+        client.close()
+
+    request.addfinalizer(teardown)
+    return client
+
+
+def test_find_string(sftp_client):
     file_name = '/etc/hosts'
     search = '127.0.0.1\tlocalhost'
-    sftp_client = connection.open_sftp()
     remote_file = sftp_client.open(file_name)
     file_content = ''
     for line in remote_file:
