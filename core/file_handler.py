@@ -1,13 +1,21 @@
 from abc import abstractmethod, ABC
 
 
-class FileGenerator(ABC):
+class FileHandler(ABC):
     @abstractmethod
     def get_name(self):
         pass
 
 
-class TxtFileGenerator(FileGenerator):
+class NoExtensionFileHandler(FileHandler):
+    def __init__(self, name):
+        self._name = name
+
+    def get_name(self):
+        return str(self._name)
+
+
+class TxtFileHandler(FileHandler):
     def __init__(self, name: str):
         self._name = name
 
@@ -15,8 +23,8 @@ class TxtFileGenerator(FileGenerator):
         return self._name + '.txt'
 
 
-class RemoteHomeFileGenerator(FileGenerator):
-    def __init__(self, file: FileGenerator, user_name: str):
+class RemoteHomeFileHandler(FileHandler):
+    def __init__(self, file: FileHandler, user_name: str):
         self.text = file
         self._user_name = user_name
 

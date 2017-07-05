@@ -1,6 +1,7 @@
 import pytest
 
 from core.connection import SshConnection
+from core.file_handler import NoExtensionFileHandler
 from core.user import SshUser
 
 
@@ -29,10 +30,10 @@ def sftp_client(request, connection):
 
 
 def test_find_string(sftp_client):
-    file_name = '/etc/hosts'
-    search = '127.0.0.1\tlocalhost'
-    remote_file = sftp_client.open(file_name)
+    new_file = NoExtensionFileHandler('/etc/hosts')
+    remote_file = sftp_client.open(new_file.get_name())
+    searchable_string = '127.0.0.1\tlocalhost'
     file_content = ''
     for line in remote_file:
         file_content += line
-    assert search in file_content
+    assert searchable_string in file_content
