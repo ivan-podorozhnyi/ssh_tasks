@@ -1,13 +1,14 @@
 import pytest
+from ssh_automated_tests.core.file_handler import NoExtensionFileHandler
+from ssh_automated_tests.core.user import SshUser
 
-from core.connection import SshConnection
-from core.file_handler import NoExtensionFileHandler
-from core.user import SshUser
+from ssh_automated_tests.core.connection import SshConnection
 
 
 @pytest.fixture()
 def connection(request):
-    user = SshUser(name='ivan', port=3022, key='../id_rsa', address='127.0.0.1')
+    user = SshUser(name='ivan', port=3022, key='../../id_rsa',
+                   address='127.0.0.1')
     ssh_connection = SshConnection(user)
     ssh_connection.connect_via_key()
 

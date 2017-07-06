@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+
 import paramiko
-from core.user import SshUser
+
+from ssh_automated_tests.core.user import SshUser
 
 
 class Connection(ABC):
