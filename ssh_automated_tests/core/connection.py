@@ -18,7 +18,7 @@ class SshConnection:
 
     def connect_via_key(self):
         print('connecting')
-        connection_data = self.user.make_connection_data()
+        connection_data = self.user.connection_data()
         pkey = paramiko.RSAKey.from_private_key_file(connection_data["key"])
         self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self.client.connect(hostname=connection_data["hostname"],

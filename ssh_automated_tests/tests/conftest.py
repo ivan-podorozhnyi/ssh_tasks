@@ -8,7 +8,7 @@ from ssh_automated_tests.core.user import SshUserFromPropFile
 
 @pytest.fixture(scope="module")
 def connection(request):
-    user = SshUserFromPropFile(PropertiesFile('config_draft'))
+    user = SshUserFromPropFile(PropertiesFile('config'))
 
     connection = SshConnection(user).connect_via_key()
 
