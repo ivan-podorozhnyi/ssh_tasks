@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import paramiko
 
-from ssh_automated_tests.core.user import SshUser
+from ssh_automated_tests.core.user import User
 
 
 class Connection(ABC):
@@ -12,7 +12,7 @@ class Connection(ABC):
 
 
 class SshConnection:
-    def __init__(self, user: SshUser):
+    def __init__(self, user: User):
         self.client = paramiko.SSHClient()
         self.user = user
 
