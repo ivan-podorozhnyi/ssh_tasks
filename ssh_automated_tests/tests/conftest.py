@@ -1,14 +1,15 @@
 import pytest
 from ssh_automated_tests.core.cmd_handler import ShellCmdHandler
-from ssh_automated_tests.core.user import SshUser
+from ssh_automated_tests.core.file import PropertiesFile
 
 from ssh_automated_tests.core.connection import SshConnection
+from ssh_automated_tests.core.user import SshUserFromPropFile
 
 
 @pytest.fixture(scope="module")
 def connection(request):
-    user = SshUser(name="ivan", port=3022, key="../../id_rsa",
-                   address="127.0.0.1")
+    user = SshUserFromPropFile(PropertiesFile('config_draft'))
+
     connection = SshConnection(user).connect_via_key()
 
     def tear_down():
