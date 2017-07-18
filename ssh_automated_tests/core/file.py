@@ -23,6 +23,14 @@ class TxtFile(File):
         return self._name + '.txt'
 
 
+class PropertiesFile(File):
+    def __init__(self, name: str):
+        self._name = name
+
+    def name(self):
+        return self._name + '.properties'
+
+
 class RemoteHomeFile(File):
     def __init__(self, file: File, user_name: str):
         self.text = file
