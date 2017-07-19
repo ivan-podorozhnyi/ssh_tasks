@@ -1,14 +1,14 @@
 import pytest
-from ssh_automated_tests.core.cmd_handler import ShellCmdHandler
-from ssh_automated_tests.core.file import PropertiesFile
 
+from ssh_automated_tests.core.cmd_handler import ShellCmdHandler
 from ssh_automated_tests.core.connection import SshConnection
-from ssh_automated_tests.core.user import SshUserFromPropFile
+from ssh_automated_tests.core.file import PropertiesFile
+from ssh_automated_tests.core.user import ParamikoUserFromPropFile
 
 
 @pytest.fixture(scope="module")
 def connection(request):
-    user = SshUserFromPropFile(PropertiesFile('config'))
+    user = ParamikoUserFromPropFile(PropertiesFile('config'))
 
     connection = SshConnection(user).connect_via_key()
 
