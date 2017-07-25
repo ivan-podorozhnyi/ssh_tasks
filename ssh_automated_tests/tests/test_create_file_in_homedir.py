@@ -1,4 +1,7 @@
+from ssh_automated_tests.core.file import RawFile
+
+
 def test_create_file(shell, sftp):
-    file_name = "new_test1235252"
-    shell.send_command("touch {}\n".format(file_name))
-    sftp.stat(file_name)
+    file = RawFile("new_test")
+    shell.execute_with_output("touch {}\n".format(file.name()))
+    sftp.get_file_stat(file.name())

@@ -1,8 +1,9 @@
 import pytest
 
-from ssh_automated_tests.core.cmd_handler import ShellCmdHandler
+from ssh_automated_tests.core.channel import SftpChannel
 from ssh_automated_tests.core.connection import SshConnection
 from ssh_automated_tests.core.file import PropertiesFile
+from ssh_automated_tests.core.shell import InteractiveShell
 from ssh_automated_tests.core.user import ParamikoUserFromPropFile
 
 
@@ -10,10 +11,10 @@ from ssh_automated_tests.core.user import ParamikoUserFromPropFile
 def connection(request):
     user = ParamikoUserFromPropFile(PropertiesFile('config'))
 
-    connection = SshConnection(user).connect_via_key()
+    connection = SshConnection(user).connect()
 
     def tear_down():
-        connection.close()
+        connection.disconnect()
 
     request.addfinalizer(tear_down)
     return connection
@@ -21,7 +22,7 @@ def connection(request):
 
 @pytest.fixture()
 def shell(request, connection):
-    shell = ShellCmdHandler(connection)
+    shell = InteractiveShell(connection)
 
     def tear_down():
         shell.close()
@@ -32,7 +33,7 @@ def shell(request, connection):
 
 @pytest.fixture()
 def sftp(request, connection):
-    sftp = connection.open_sftp()
+    sftp = SftpChannel(connection)
 
     def tear_down():
         sftp.close()
