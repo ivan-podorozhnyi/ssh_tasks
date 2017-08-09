@@ -1,11 +1,15 @@
 from abc import ABC, abstractmethod
 
-from ssh_automated_tests.core.connection import Connection
+from ssh_automated_tests.core.connection import SshConnection
 
 
-class Channel(ABC):
+class FileChannel(ABC):
     @abstractmethod
-    def open_file(self, file_name: str):
+    def open(self, file_name: str):
+        pass
+
+    @abstractmethod
+    def get_stat(self, file_name: str):
         pass
 
     @abstractmethod
@@ -13,22 +17,15 @@ class Channel(ABC):
         pass
 
 
-class SftpChannel(Channel):
-    def __init__(self, connection: Connection):
+class SftpChannel(FileChannel):
+    def __init__(self, connection: SshConnection):
         self._connection = connection
-        self._sftp = self._initialize_sftp()
+        self._sftp = self._connection.open_sftp()
 
-    def _initialize_sftp(self):
-        try:
-            return self._connection.open_sftp()
-        except AttributeError:
-            raise AttributeError("Given connection can't establish sftp "
-                                 "channel.")
-
-    def get_file_stat(self, file_name: str):
+    def get_stat(self, file_name: str):
         return self._sftp.stat(file_name)
 
-    def open_file(self, file_name: str):
+    def open(self, file_name: str):
         return self._sftp.open(file_name)
 
     def close(self):
