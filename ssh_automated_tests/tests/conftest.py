@@ -1,7 +1,7 @@
 import pytest
 
 from ssh_automated_tests.core.channel import SftpChannel
-from ssh_automated_tests.core.connection import SshConnection
+from ssh_automated_tests.core.connection import BaseSshConnection
 from ssh_automated_tests.core.file import PropertiesFile
 from ssh_automated_tests.core.shell import InteractiveShell
 from ssh_automated_tests.core.user import ParamikoUserFromPropFile
@@ -11,7 +11,7 @@ from ssh_automated_tests.core.user import ParamikoUserFromPropFile
 def connection(request):
     user = ParamikoUserFromPropFile(PropertiesFile('config'))
 
-    connection = SshConnection(user).connect()
+    connection = BaseSshConnection(user).connect()
 
     def tear_down():
         connection.disconnect()
