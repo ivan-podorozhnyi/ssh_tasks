@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from time import sleep
 
-from ssh_automated_tests.core.connection import Connection
+from ssh_automated_tests.core.connection import BaseSshConnection
 
 
 class Shell(ABC):
@@ -10,25 +10,26 @@ class Shell(ABC):
         pass
 
     @abstractmethod
-    def execute_with_output(self, command: str):
+    def execute_with_output(self, command: str) -> str:
         pass
 
     @abstractmethod
     def close(self):
         pass
 
+    @abstractmethod
+    def read_output(self) -> str:
+        pass
+
+    @abstractmethod
+    def send_key(self, key: str):
+        pass
+
 
 class InteractiveShell(Shell):
-    def __init__(self, connection: Connection):
+    def __init__(self, connection: BaseSshConnection):
         self._connection = connection
-        self._shell = self._initialize_shell()
-
-    def _initialize_shell(self):
-        try:
-            return self._connection.open_shell()
-        except AttributeError:
-            raise AttributeError("Given connection can't invoke interactive "
-                                 "shell.")
+        self._shell = self._connection.open_shell()
 
     def execute(self, command: str):
         self._shell.send(command)
@@ -44,13 +45,6 @@ class InteractiveShell(Shell):
         while self._shell.recv_ready():
             stdout_raw += self._shell.recv(1024)
         return str(stdout_raw, "utf-8")
-
-    def append_file_with_vim(self, file_name: str, text: str):
-        self.execute('vim ' + file_name + '\n')
-        self.execute('A')
-        self.execute(text)
-        self.send_key('ESC')
-        self.execute(':wq\n')
 
     def send_key(self, key: str):
         if key == 'ESC':
